@@ -100,6 +100,7 @@ async function handleFile(file) {
     emptyState.classList.add('hidden');
     resultView.classList.remove('hidden');
     previewBlock.classList.remove('hidden');
+    uploadArea.classList.add('hidden');   // ← hide the big uploader; "换一张" button on the preview handles re-upload
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detect'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== 'detect'));
 

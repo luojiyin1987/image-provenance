@@ -498,7 +498,14 @@ a:hover { color: var(--text-muted); }
     display: flex; flex-direction: column; gap: 14px;
     position: sticky; top: 20px;
     max-height: calc(100vh - 40px);
+    overflow-y: auto;          /* failsafe: if content exceeds max-height, scroll inside the pane rather than crop */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
 }
+.pane-left::-webkit-scrollbar { width: 6px; }
+.pane-left::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+.pane-left::-webkit-scrollbar-track { background: transparent; }
 
 /* Upload area in left pane */
 .pane-left .upload-area { padding: clamp(28px, 4vw, 40px) 20px; }
@@ -516,18 +523,36 @@ a:hover { color: var(--text-muted); }
     border: 1px solid var(--border);
 }
 .preview-frame img {
-    width: 100%; display: block; max-height: 420px; object-fit: contain;
+    width: 100%; display: block; object-fit: contain;
+    /* Dynamic height: don't let a tall portrait push the file-meta card
+     * out of the viewport. Cap at 60vh and also at (viewport − reserved
+     * space for the meta card). Minimum 180px so a tiny landscape image
+     * still shows usefully. */
+    max-height: min(60vh, calc(100vh - 300px));
+    min-height: 180px;
+    background: var(--surface-alt);
 }
 .preview-change {
     position: absolute; top: 10px; right: 10px;
-    background: rgba(0,0,0,.65); color: #fff; backdrop-filter: blur(8px);
+    background: rgba(0,0,0,.7); color: #fff; backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: none; border-radius: 999px; padding: 6px 12px;
     font-size: 12px; font-weight: 500; cursor: pointer;
     display: inline-flex; align-items: center; gap: 6px;
-    opacity: 0; transform: translateY(-4px);
-    transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+    /* Always visible: touch devices have no hover */
+    opacity: 1; transform: translateY(0);
+    transition: opacity var(--dur-fast) var(--ease),
+                background-color var(--dur-fast) var(--ease);
+    z-index: 2;
 }
-.preview-frame:hover .preview-change { opacity: 1; transform: translateY(0); }
+.preview-change:hover { background: rgba(0,0,0,.85); }
+@media (hover: hover) {
+    /* Desktop: fade in on hover so the button doesn't distract while
+     * viewing the image */
+    .preview-change { opacity: 0; }
+    .preview-frame:hover .preview-change,
+    .preview-change:focus-visible { opacity: 1; }
+}
 
 .file-meta-card {
     background: var(--surface); border: 1px solid var(--border);
