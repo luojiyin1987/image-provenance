@@ -30,8 +30,13 @@ Object.entries(CAMERA_PROFILES).forEach(([key, cam]) => {
 
 // --- Upload handling ---
 const uploadArea = document.getElementById('uploadArea');
+const uploadInner = uploadArea.querySelector('.upload-inner');
+const uploadOriginalHTML = uploadInner.innerHTML;
 const fileInput = document.getElementById('fileInput');
-uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('click', (e) => {
+    if (e.target.closest('input, button, a')) return;
+    fileInput.click();
+});
 uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
 uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
 uploadArea.addEventListener('drop', e => {
@@ -53,14 +58,17 @@ async function handleFile(file) {
     lastFreqBytes = null; lastFreqResult = null;
     const freqPanel = document.getElementById('freqPanel');
     if (freqPanel) freqPanel.innerHTML = `
-        <button class="btn-freq" id="btnRunFreq">▶ 运行频域分析 (~1-3 秒)</button>
-        <div class="freq-placeholder">
-            提取 57 个频域特征 · FFT 幅度谱、径向功率谱、相位一致性、LSB 偏置、小波子带能量…
-            <br>在 Web Worker 中运行,不阻塞页面。
-        </div>`;
+        <button class="btn-primary" id="btnRunFreq">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            运行频域分析
+        </button>
+        <p class="panel-hint">
+            提取 65 个频域特征:FFT 幅度谱、径向功率谱、相位一致性、LSB 偏置、小波子带能量……<br>
+            在 Web Worker 中执行,不阻塞页面。耗时约 1-3 秒。
+        </p>`;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detect'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.dataset.panel !== 'detect'));
-    uploadArea.innerHTML = '<div class="loading"><div class="spinner"></div><br>正在分析...</div>';
+    uploadInner.innerHTML = '<div class="loading"><div class="spinner"></div>正在分析...</div>';
 
     try {
         const buffer = await file.arrayBuffer();
@@ -68,9 +76,9 @@ async function handleFile(file) {
         currentBytes = uint8;
         const hashHex = await sha256(buffer);
 
-        const fileType = file.type === 'image/png' ? 'PNG (image/png)'
-            : file.type === 'image/jpeg' ? 'JPEG (image/jpeg)'
-            : file.type === 'image/webp' ? 'WebP (image/webp)' : file.type;
+        const fileType = file.type === 'image/png' ? 'PNG'
+            : file.type === 'image/jpeg' ? 'JPEG'
+            : file.type === 'image/webp' ? 'WebP' : (file.type || '未知');
 
         const { detections } = await runAllDetections(uint8);
         const dims = await getImageDims(file);
@@ -93,7 +101,7 @@ async function handleFile(file) {
                 : '当前文件字节中没有检出典型 AI 生成标记。';
         const hb = document.getElementById('headerBadge');
         hb.textContent = anyHit ? '命中' : '未命中';
-        hb.className = 'badge ' + (anyHit ? 'badge-hit' : 'badge-clean');
+        hb.className = 'pill ' + (anyHit ? 'badge-hit' : 'badge-clean');
 
         const container = document.getElementById('detectionItems');
         container.innerHTML = '';
@@ -122,12 +130,10 @@ async function handleFile(file) {
         document.getElementById('convertResult').style.display = 'none';
         document.getElementById('btnConvert').disabled = false;
 
-        uploadArea.innerHTML = `<div class="upload-icon">🔍</div>
-            <div class="upload-text">拖拽图片到此处,或 <strong>点击选择文件</strong><br>
-            支持 PNG / JPEG / WebP · 检测 C2PA、OpenAI、Google SynthID、Midjourney 等</div>`;
+        uploadInner.innerHTML = uploadOriginalHTML;
         document.getElementById('results').classList.remove('hidden');
     } catch (err) {
-        uploadArea.innerHTML = `<div class="upload-text" style="color:#c0392b">分析出错: ${escHtml(err.message)}</div>`;
+        uploadInner.innerHTML = `<div class="upload-text" style="color:var(--danger)">分析出错: ${escHtml(err.message)}</div>`;
     }
 }
 
@@ -161,14 +167,14 @@ document.getElementById('btnConvert').addEventListener('click', async () => {
         const outName = `${origName}_${profile.Make}_${Date.now().toString(36)}.jpg`;
 
         resultDiv.innerHTML = `
-            <div style="color:#2e7d32;font-weight:600;margin-bottom:10px">✅ 转换完成</div>
+            <div style="color:var(--success);font-weight:600;margin-bottom:10px">✅ 转换完成</div>
             <img src="${url}" alt="转换结果">
-            <div style="font-size:12px;color:#666;margin:8px 0;line-height:1.8">
+            <div style="font-size:12px;color:var(--text-muted);margin:8px 0;line-height:1.8">
                 ${log.map(l => `• ${escHtml(l)}`).join('<br>')}
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-                <a class="download-btn" href="${url}" download="${escHtml(outName)}">⬇️ 下载 (${formatSize(blob.size)})</a>
-                <button class="download-btn" style="background:#555;border:none;cursor:pointer" id="btnReanalyze">🔍 重新分析</button>
+                <a class="download-btn" href="${url}" download="${escHtml(outName)}">下载 (${formatSize(blob.size)})</a>
+                <button class="btn-secondary" id="btnReanalyze">重新分析</button>
             </div>
         `;
         document.getElementById('btnReanalyze').onclick = async () => {
@@ -177,7 +183,7 @@ document.getElementById('btnConvert').addEventListener('click', async () => {
         };
     } catch (err) {
         resultDiv.className = 'convert-result error';
-        resultDiv.innerHTML = `<div style="color:#c0392b;font-weight:600">转换失败: ${escHtml(err.message)}</div>`;
+        resultDiv.innerHTML = `<div style="color:var(--danger);font-weight:600">转换失败: ${escHtml(err.message)}</div>`;
     } finally {
         btn.disabled = false;
     }
@@ -217,6 +223,19 @@ document.addEventListener('click', async (ev) => {
         lastFreqResult = result;
         renderFrequencyPanel(panel, result);
     } catch (err) {
-        panel.innerHTML = `<div style="color:#c0392b;font-weight:600;padding:16px">频域分析失败: ${escHtml(err.message)}</div>`;
+        panel.innerHTML = `<div style="color:var(--danger);font-weight:600;padding:16px">频域分析失败: ${escHtml(err.message)}</div>`;
     }
 });
+
+// --- Theme toggle (light/dark) ---
+const themeToggle = document.getElementById('themeToggle');
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.dataset.theme;
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        const meta = document.querySelector('meta[name="theme-color"]:not([media])');
+        if (meta) meta.setAttribute('content', next === 'dark' ? '#0a0a0b' : '#ffffff');
+    });
+}

@@ -77,29 +77,31 @@ function drawFftHeatmap(canvas, mag128) {
 function drawRadialCurve(canvas, radial) {
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height;
-    ctx.fillStyle = '#fafafa'; ctx.fillRect(0, 0, w, h);
-    // log-log plot
+    const styles = getComputedStyle(document.documentElement);
+    const bg = styles.getPropertyValue('--surface-alt').trim() || '#fafafa';
+    const grid = styles.getPropertyValue('--border').trim() || '#e0e0e0';
+    const curve = styles.getPropertyValue('--text').trim() || '#0a0a0b';
+    const label = styles.getPropertyValue('--text-muted').trim() || '#666';
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
     const N = radial.length;
     const pad = 28;
     const logR = Array.from(radial, v => Math.log(Math.max(v, 1e-6)));
     let lo = Infinity, hi = -Infinity;
     for (let i = 1; i < N; i++) { if (logR[i] < lo) lo = logR[i]; if (logR[i] > hi) hi = logR[i]; }
     const span = hi - lo || 1;
-    // grid
-    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+    ctx.strokeStyle = grid; ctx.lineWidth = 1;
     for (let k = 1; k < 4; k++) {
         const y = pad + (h - 2*pad) * (k / 4);
         ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
     }
-    // curve
-    ctx.strokeStyle = '#0071e3'; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.strokeStyle = curve; ctx.lineWidth = 1.75; ctx.beginPath();
     for (let i = 1; i < N; i++) {
         const px = pad + (w - 2*pad) * (i - 1) / (N - 2);
         const py = (h - pad) - (h - 2*pad) * (logR[i] - lo) / span;
         if (i === 1) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
     ctx.stroke();
-    ctx.fillStyle = '#666'; ctx.font = '10px -apple-system, sans-serif';
+    ctx.fillStyle = label; ctx.font = '10px ui-sans-serif, system-ui, sans-serif';
     ctx.fillText('低频', pad - 4, h - 8);
     ctx.fillText('高频', w - pad - 20, h - 8);
     ctx.fillText('log(power)', 2, 12);
