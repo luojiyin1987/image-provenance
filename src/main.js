@@ -107,6 +107,10 @@ async function handleFile(file) {
     // Reset freq panel to pristine
     const freqPanel = document.getElementById('freqPanel');
     if (freqPanel) freqPanel.innerHTML = `
+        <div class="freq-disclaimer">
+            <span class="freq-disclaimer-tag">非专业分析</span>
+            <span>仅供参考 · 基于启发式规则,不等同于学术级分类器</span>
+        </div>
         <button class="btn-primary" id="btnRunFreq">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             运行频域分析

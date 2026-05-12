@@ -796,3 +796,19 @@ a:hover { color: var(--text-muted); }
     background: var(--surface-alt); border: 1px dashed var(--border-strong);
     border-radius: var(--radius-md); font-size: 13px;
 }
+
+/* Frequency disclaimer banner */
+.freq-disclaimer {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 14px; margin-bottom: 16px;
+    background: var(--warn-bg); border-radius: var(--radius-sm);
+    font-size: 12px; color: var(--text); line-height: 1.5;
+}
+.freq-disclaimer-tag {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 4px;
+    background: var(--warn); color: var(--bg);
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; flex-shrink: 0;
+}
+[data-theme="dark"] .freq-disclaimer-tag { color: var(--accent-fg); }

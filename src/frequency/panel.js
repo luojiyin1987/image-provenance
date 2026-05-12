@@ -3,6 +3,10 @@
 export function renderFrequencyPanel(container, result) {
     const { features, viz, score, timing, side } = result;
     container.innerHTML = `
+        <div class="freq-disclaimer">
+            <span class="freq-disclaimer-tag">非专业分析</span>
+            <span>仅供参考 · 基于 12 条启发式规则,不等同于学术级分类器。对现代扩散模型(SD/DALL-E/Gemini/Flux)误判率较高。</span>
+        </div>
         <div class="freq-head">
             <div class="freq-verdict ${score.confidence ? 'conf-' + score.confidence : ''}">
                 <span class="freq-verdict-label">启发式判定</span>
