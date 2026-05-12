@@ -4,6 +4,7 @@ import { sha256, formatSize, getImageDims, escHtml } from './utils.js';
 import { runAllDetections } from './detect.js';
 import { CAMERA_PROFILES } from './cameras.js';
 import { convertImage } from './convert.js';
+import { disruptWatermark } from './watermark.js';
 
 let selectedProfile = 'iphone15pro';
 let currentFile = null;
@@ -36,6 +37,11 @@ uploadArea.addEventListener('drop', e => {
     if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
 });
 fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+// Live intensity label
+const wmRange = document.getElementById('wmIntensity');
+const wmLabel = document.getElementById('wmIntensityVal');
+if (wmRange && wmLabel) wmRange.addEventListener('input', () => { wmLabel.textContent = wmRange.value; });
 
 async function handleFile(file) {
     currentFile = file;
@@ -124,11 +130,17 @@ document.getElementById('btnConvert').addEventListener('click', async () => {
     try {
         const profile = CAMERA_PROFILES[selectedProfile];
         const disrupt = document.getElementById('chkDisruptWatermark')?.checked;
+        const intensity = parseInt(document.getElementById('wmIntensity')?.value || '3', 10);
+        let wmReport = null;
         const { blob, log } = await convertImage(currentBytes, currentFile.type, profile, {
-            quality: 0.92,
-            // disruptWatermark: disrupt ? (canvas) => applyDisruption(canvas) : null,  // task #8
+            quality: 0.88 + Math.random() * 0.07,
+            disruptWatermark: disrupt ? async (canvas) => {
+                wmReport = await disruptWatermark(canvas, { intensity });
+            } : null,
         });
-        if (disrupt) log.push('⚠️ 水印扰动功能将在下一版本(任务 #8)启用');
+        if (wmReport) {
+            for (const l of wmReport.log) log.push('  · ' + l);
+        }
 
         const url = URL.createObjectURL(blob);
         const origName = currentFile.name.replace(/\.[^.]+$/, '') || 'photo';
