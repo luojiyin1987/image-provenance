@@ -174,22 +174,34 @@ async function handleFile(file) {
 
         const { detections } = await runStep(analysisLog, '匹配 AI 生成标记库', async () => {
             const res = await runAllDetections(uint8);
-            const hits = res.detections.filter(d => d.hit && d.category !== 'edit').length;
+            const hits = res.detections.filter(d => d.hit && d.category !== 'edit'
+                && (d.confidence === 'strong' || d.confidence === 'medium')).length;
             return { value: res, detail: hits ? `命中 ${hits} 项` : '全部阴性' };
         }, 360, 'done');
 
         await runStep(analysisLog, '字节级水印启发分析', () => sleep(200), 320);
 
-        // Render results
-        const aiHits = detections.filter(d => d.hit && d.category !== 'edit');
+        // Render results. "命中" only fires on strong/medium confidence —
+        // structured metadata declarations or metadata keyword matches.
+        // Weak signals (byte-level watermark heuristic, byte strings without
+        // a full JUMBF structure) have too many false positives to raise the
+        // top-level verdict; they still appear as cards below.
+        const aiHits = detections.filter(d => d.hit && d.category !== 'edit'
+            && (d.confidence === 'strong' || d.confidence === 'medium'));
+        const weakOnly = detections.filter(d => d.hit && d.category !== 'edit'
+            && d.confidence === 'weak');
         const editHits = detections.filter(d => d.hit && d.category === 'edit');
         const anyHit = aiHits.length > 0;
-        document.getElementById('headerTitle').textContent = anyHit ? '发现 AI 来源凭证线索' : '未发现明显 AI 来源凭证';
+        document.getElementById('headerTitle').textContent = anyHit
+            ? '发现 AI 来源凭证线索'
+            : '未发现 AI 来源凭证';
         document.getElementById('headerSubtitle').textContent = anyHit
-            ? '这张图可能保留了可验证来源或生成工具相关标记。'
-            : editHits.length
-                ? '未检出 AI 生成标记,但图片经过修图软件处理。'
-                : '当前文件字节中没有检出典型 AI 生成标记。';
+            ? '元数据中直接声明或强烈指向 AI 生成工具。'
+            : weakOnly.length
+                ? '未检出元数据声明的 AI 标记;仅有字节级启发性异常,不足以判定。'
+                : editHits.length
+                    ? '未检出 AI 生成标记,但图片经过修图软件处理。'
+                    : '元数据中没有发现 AI 生成相关标记。';
         const hb = document.getElementById('headerBadge');
         hb.textContent = anyHit ? '命中' : '未命中';
         hb.className = 'pill ' + (anyHit ? 'badge-hit' : 'badge-clean');
