@@ -9,6 +9,10 @@ import { analyzeFrequency } from './frequency/index.js';
 import { renderFrequencyPanel } from './frequency/panel.js';
 import { parseMetadata, sniffJumbf, getGenerationHints } from './metadata.js';
 import { renderMetadataPanel } from './panel-metadata.js';
+import { initStats, trackAnalysis, trackConversion } from './stats.js';
+
+// Kick off stats collection (safe on failure — stats just stay dashed)
+initStats();
 
 let selectedProfile = 'iphone17promax';
 let currentFile = null;
@@ -358,6 +362,7 @@ async function handleFile(file) {
 
         // Render metadata tab lazily on first activation (see tab handler below)
         document.getElementById('metadataPanel')._pending = true;
+        trackAnalysis();   // bump public analysis counter
     } catch (err) {
         const errLine = document.createElement('div');
         errLine.className = 'log-line done hit';
@@ -460,6 +465,7 @@ document.getElementById('btnConvert').addEventListener('click', async () => {
             const reFile = new File([blob], outName, { type: 'image/jpeg' });
             handleFile(reFile);
         };
+        trackConversion();   // bump public conversion counter
     } catch (err) {
         resultDiv.className = 'convert-result error';
         resultDiv.innerHTML = `<div style="color:var(--danger);font-weight:600">转换失败: ${escHtml(err.message)}</div>`;
