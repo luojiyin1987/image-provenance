@@ -201,7 +201,7 @@ a:hover { color: var(--text-muted); }
 .detection-card { padding: clamp(14px, 2vw, 20px); }
 
 /* ---------- Tabs ---------- */
-.tab-bar { display: flex; gap: 2px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+.tab-bar { display: flex; gap: 2px; margin-bottom: 22px; border-bottom: 1px solid var(--border); }
 .tab-btn {
     border: none; background: transparent; padding: 10px 14px;
     font-size: 13px; font-weight: 500; color: var(--text-muted);
@@ -218,12 +218,18 @@ a:hover { color: var(--text-muted); }
 .tab-btn:hover:not(.active) { color: var(--text); }
 .tab-panel.hidden { display: none; }
 .tab-panel { animation: fadeIn var(--dur) var(--ease); }
+/* Convert tab children stack with breathing room between each block.
+ * Without this, convert-head / camera selector / watermark block /
+ * advanced-panel / Convert button / result all glue together because
+ * they each declare their own top-level margins or none at all. */
+.tab-panel[data-panel="convert"] { display: flex; flex-direction: column; gap: 20px; }
+@media (max-width: 560px) { .tab-panel[data-panel="convert"] { gap: 16px; } }
 
 /* ---------- Detection items ---------- */
 .detection-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
-.detection-item:first-child { padding-top: 4px; }
+.detection-item:first-child { padding-top: 10px; }
 .detection-item:last-child { border-bottom: none; padding-bottom: 4px; }
-.detection-item-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+.detection-item-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
 .detection-item-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .detection-item-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
 .badge {
@@ -242,7 +248,7 @@ a:hover { color: var(--text-muted); }
 .conf-medium { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
 .conf-weak { background: var(--surface-alt); color: var(--text-muted); }
 .conf-info { background: var(--info-bg); color: var(--info); border-color: transparent; }
-.detection-item-details { margin-top: 8px; font-size: 12px; }
+.detection-item-details { margin-top: 10px; font-size: 12px; }
 .detection-item-details summary {
     cursor: pointer; color: var(--text-muted); user-select: none; padding: 2px 0;
     list-style: none; font-size: 11.5px; font-weight: 500;
@@ -257,9 +263,9 @@ a:hover { color: var(--text-muted); }
 .detection-item-details summary:hover { color: var(--text); }
 .detection-item-detail {
     background: var(--surface-alt); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 10px 12px;
+    border-radius: var(--radius-sm); padding: 12px 14px;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 11px; color: var(--text-muted); margin-top: 8px;
+    font-size: 11px; color: var(--text-muted); margin-top: 10px;
     max-height: 200px; overflow-y: auto; white-space: pre-wrap;
     word-break: break-all; line-height: 1.65;
 }
@@ -403,7 +409,7 @@ a:hover { color: var(--text-muted); }
     text-transform: uppercase; letter-spacing: 0.05em; }
 .freq-vote {
     display: flex; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm);
-    margin-bottom: 4px; font-size: 13px; line-height: 1.45;
+    margin-bottom: 6px; font-size: 13px; line-height: 1.45;
     border: 1px solid var(--border); background: var(--surface-alt);
 }
 .vote-pos { border-left: 2px solid var(--danger); }
@@ -495,7 +501,7 @@ a:hover { color: var(--text-muted); }
 }
 .pane { min-width: 0; }
 .pane-left {
-    display: flex; flex-direction: column; gap: 14px;
+    display: flex; flex-direction: column; gap: 16px;
     position: sticky; top: 20px;
     max-height: calc(100vh - 40px);
     overflow-y: auto;          /* failsafe: if content exceeds max-height, scroll inside the pane rather than crop */
@@ -565,7 +571,7 @@ a:hover { color: var(--text-muted); }
     padding-bottom: 10px; border-bottom: 1px solid var(--border);
 }
 .fm-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
 }
 .fm-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .fm-label {
@@ -575,7 +581,7 @@ a:hover { color: var(--text-muted); }
 .fm-value { font-size: 12.5px; font-weight: 500; word-break: break-word; }
 .fm-hash {
     display: flex; flex-direction: column; gap: 3px;
-    padding-top: 8px; border-top: 1px solid var(--border);
+    padding-top: 10px; border-top: 1px solid var(--border);
 }
 .fm-hash .fm-value {
     font-size: 10.5px; color: var(--text-muted); line-height: 1.5;
@@ -624,7 +630,7 @@ a:hover { color: var(--text-muted); }
 }
 .result-head {
     display: flex; justify-content: space-between; align-items: flex-start;
-    gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border);
+    gap: 16px; padding-bottom: 22px; border-bottom: 1px solid var(--border);
 }
 .result-head-text { flex: 1; min-width: 0; }
 .result-head .summary-title { margin-top: 2px; }
@@ -968,7 +974,7 @@ a:hover { color: var(--text-muted); }
 .community-card {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: clamp(16px, 3vw, 24px);
+    gap: clamp(16px, 3vw, 32px);
     align-items: center;
     padding: clamp(16px, 3vw, 24px);
     background: var(--surface);
