@@ -1,11 +1,15 @@
 // Public usage stats via counterapi.dev v2.
 // Each counter maps to a real user event; numbers render at the bottom
-// of the page. Fails silently if the API is unreachable or unauthorized
-// — we never block core features on stat tracking.
+// of the page. Fails silently if the API is unreachable.
+//
+// The workspace is set to 'Publicly Accessible' on counterapi.dev,
+// which means NO Authorization header is sent. This matters: with the
+// header, the browser triggers a CORS preflight that counterapi's
+// Cloudflare layer rejects (it doesn't whitelist 'Authorization' in
+// Access-Control-Allow-Headers). Without it, the request becomes a
+// "simple" CORS request and just works.
 
-// CONFIG — update these after creating the workspace on https://counterapi.dev/
 const WORKSPACE = 'image-provenance';
-const TOKEN = 'ut_qQy59UDRFksPM5kiJOxkdV0ijZvdFAtpCLxAkIAu';
 const API = 'https://api.counterapi.dev/v2';
 
 const COUNTERS = [
@@ -14,16 +18,11 @@ const COUNTERS = [
     { key: 'image-provenance-conversions', label: '转换', el: 'statConversions' },
 ];
 
-const headers = { 'Authorization': `Bearer ${TOKEN}` };
-
-// One-shot "visit" increment per session — avoids padding numbers on
-// refresh spam. Uses sessionStorage, not localStorage, so a new tab still
-// counts as a fresh visit (reasonable for a tool-style site).
 const SESSION_KEY = 'ip_visited';
 
 async function readCounter(key) {
     try {
-        const r = await fetch(`${API}/${WORKSPACE}/${key}`, { headers });
+        const r = await fetch(`${API}/${WORKSPACE}/${key}`);
         if (!r.ok) return null;
         const data = await r.json();
         return data?.data?.up_count ?? data?.count ?? data?.value ?? null;
@@ -32,7 +31,7 @@ async function readCounter(key) {
 
 async function bumpCounter(key) {
     try {
-        const r = await fetch(`${API}/${WORKSPACE}/${key}/up`, { headers });
+        const r = await fetch(`${API}/${WORKSPACE}/${key}/up`);
         if (!r.ok) return null;
         const data = await r.json();
         return data?.data?.up_count ?? data?.count ?? data?.value ?? null;
