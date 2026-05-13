@@ -4,14 +4,14 @@
 // — we never block core features on stat tracking.
 
 // CONFIG — update these after creating the workspace on https://counterapi.dev/
-const WORKSPACE = 'image-provenancecounters';
+const WORKSPACE = 'image-provenance';
 const TOKEN = 'ut_qQy59UDRFksPM5kiJOxkdV0ijZvdFAtpCLxAkIAu';
 const API = 'https://api.counterapi.dev/v2';
 
 const COUNTERS = [
-    { key: 'visits',      label: '访问', el: 'statVisits' },
-    { key: 'analyses',    label: '检测', el: 'statAnalyses' },
-    { key: 'conversions', label: '转换', el: 'statConversions' },
+    { key: 'image-provenance-visits',      label: '访问', el: 'statVisits' },
+    { key: 'image-provenance-analyses',    label: '检测', el: 'statAnalyses' },
+    { key: 'image-provenance-conversions', label: '转换', el: 'statConversions' },
 ];
 
 const headers = { 'Authorization': `Bearer ${TOKEN}` };
@@ -46,8 +46,8 @@ function renderCount(elId, val) {
 }
 
 // Public bump helpers called from main.js event handlers.
-export async function trackAnalysis()  { const n = await bumpCounter('analyses');    renderCount('statAnalyses', n); }
-export async function trackConversion(){ const n = await bumpCounter('conversions'); renderCount('statConversions', n); }
+export async function trackAnalysis()  { const n = await bumpCounter('image-provenance-analyses');    renderCount('statAnalyses', n); }
+export async function trackConversion(){ const n = await bumpCounter('image-provenance-conversions'); renderCount('statConversions', n); }
 
 // Called once on page load — bump visits (session-guarded) then fetch
 // all four current totals for display.
@@ -58,11 +58,11 @@ export async function initStats() {
 
     const firstVisit = !sessionStorage.getItem(SESSION_KEY);
     if (firstVisit) {
-        const n = await bumpCounter('visits');
+        const n = await bumpCounter('image-provenance-visits');
         renderCount('statVisits', n);
         sessionStorage.setItem(SESSION_KEY, '1');
     } else {
-        readCounter('visits').then(n => renderCount('statVisits', n));
+        readCounter('image-provenance-visits').then(n => renderCount('statVisits', n));
     }
     // Fetch the other three in parallel
     COUNTERS.slice(1).forEach(({ key, el }) => {
