@@ -163,6 +163,61 @@ function buildExifBytes(piexif, profile, adv) {
     return piexif.dump({ '0th': zeroth, Exif: exif, GPS: gps, Interop: {}, '1st': {}, thumbnail: null });
 }
 
+// --- XMP injection for iOS Photos compatibility ---
+
+function buildXmpGps(lat, lon) {
+    const latRef = lat >= 0 ? 'N' : 'S';
+    const lonRef = lon >= 0 ? 'E' : 'W';
+    return [
+        '<?xpacket begin="\xef\xbb\xbf" id="W5M0MpCehiHzreSzNTczkc9d"?>',
+        '<x:xmpmeta xmlns:x="adobe:ns:meta/">',
+        '  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">',
+        '    <rdf:Description rdf:about=""',
+        '          xmlns:exif="http://ns.adobe.com/exif/1.0/">',
+        `       <exif:GPSLatitude>${Math.abs(lat)}</exif:GPSLatitude>`,
+        `       <exif:GPSLatitudeRef>${latRef}</exif:GPSLatitudeRef>`,
+        `       <exif:GPSLongitude>${Math.abs(lon)}</exif:GPSLongitude>`,
+        `       <exif:GPSLongitudeRef>${lonRef}</exif:GPSLongitudeRef>`,
+        '    </rdf:Description>',
+        '  </rdf:RDF>',
+        '</x:xmpmeta>',
+        '<?xpacket end="w"?>',
+    ].join('\r\n');
+}
+
+function injectXmpIntoJpeg(jpegBytes, xmpStr) {
+    // XMP stored in JPEG APP1 segment (0xFFE1)
+    const xmpNs = 'http://ns.adobe.com/xap/1.0/\x00';
+    const xmpBytes = new TextEncoder().encode(xmpStr);
+    const segLen = 2 + xmpNs.length + xmpBytes.length; // length field includes itself
+
+    // Build APP1 segment
+    const app1 = new Uint8Array(2 + segLen);
+    app1[0] = 0xFF;
+    app1[1] = 0xE1;
+    app1[2] = (segLen >> 8) & 0xFF;
+    app1[3] = segLen & 0xFF;
+    let off = 4;
+    for (let i = 0; i < xmpNs.length; i++) app1[off++] = xmpNs.charCodeAt(i);
+    app1.set(xmpBytes, off);
+
+    // Find insertion point: after SOI (0xFFD8) and any existing APP0/APP1 markers
+    let pos = 2;
+    while (pos < jpegBytes.length - 1 && jpegBytes[pos] === 0xFF) {
+        const mk = jpegBytes[pos + 1];
+        if (mk === 0xDA) break; // SOS — stop
+        const sLen = (jpegBytes[pos + 2] << 8) | jpegBytes[pos + 3];
+        pos += 2 + sLen;
+    }
+
+    // Splice
+    const out = new Uint8Array(jpegBytes.length + app1.length);
+    out.set(jpegBytes.slice(0, pos), 0);
+    out.set(app1, pos);
+    out.set(jpegBytes.slice(pos), pos + app1.length);
+    return out;
+}
+
 async function injectExifIntoJpeg(jpegBlob, profile, adv) {
     const piexif = await loadPiexif();
     const dataUrl = await new Promise((resolve, reject) => {
@@ -175,8 +230,15 @@ async function injectExifIntoJpeg(jpegBlob, profile, adv) {
     const withExif = piexif.insert(exifStr, dataUrl);
     const comma = withExif.indexOf(',');
     const bin = atob(withExif.slice(comma + 1));
-    const out = new Uint8Array(bin.length);
+    let out = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+
+    // Inject XMP GPS if present (required for iOS Photos to show location)
+    if (adv?.gps && adv.gps.lat != null && adv.gps.lon != null) {
+        const xmp = buildXmpGps(adv.gps.lat, adv.gps.lon);
+        out = injectXmpIntoJpeg(out, xmp);
+    }
+
     return new Blob([out], { type: 'image/jpeg' });
 }
 
