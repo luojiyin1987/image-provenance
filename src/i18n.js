@@ -4,8 +4,8 @@
 
 const STRINGS = {
     // Hero / empty-state
-    'hero.title':           { zh: '追溯一张图的来路',                                                  en: 'Trace where an image comes from' },
-    'hero.sub':             { zh: '检测 C2PA 凭证、AI 生成签名、频域水印痕迹。',                       en: 'Detect C2PA credentials, AI-generated signatures, and frequency-domain watermark traces.' },
+    'hero.title':           { zh: 'AI 图片检测 — 判断图片是不是 AI 生成',                               en: 'AI Image Detector — Check if Image is AI Generated' },
+    'hero.sub':             { zh: '免费在线检测图片是否 AI 生成。识别 C2PA、SynthID、DALL·E、Midjourney、Stable Diffusion 等 20+ AI 工具签名。', en: 'Free online AI image detection. Identify C2PA, SynthID, DALL·E, Midjourney, Stable Diffusion and 20+ AI-generated signatures.' },
     'hero.feature.c2pa':    { zh: 'C2PA / Content Credentials',                                       en: 'C2PA / Content Credentials' },
     'hero.feature.vendors': { zh: 'OpenAI · Google SynthID · Midjourney · SD',                        en: 'OpenAI · Google SynthID · Midjourney · SD' },
     'hero.feature.freq':    { zh: '65 项频域特征 + 启发式打分',                                        en: '65 frequency features + heuristic scoring' },
