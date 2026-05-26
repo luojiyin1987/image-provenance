@@ -1,6 +1,6 @@
 # Image Provenance
 
-[![Pages](https://img.shields.io/badge/demo-online-2ea44f)](https://863401402.github.io/image-provenance/?lang=en)
+[![Pages](https://img.shields.io/badge/demo-online-2ea44f)](https://image-provenance.itea.fit/?lang=en)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Client-side](https://img.shields.io/badge/100%25-client--side-0071e3)](#)
 
@@ -8,7 +8,7 @@
 
 > AI image provenance tool. **Runs 100% in your browser — your image never leaves your device.**
 
-👉 [**Open the live demo**](https://863401402.github.io/image-provenance/?lang=en)
+👉 [**Open the live demo**](https://image-provenance.itea.fit/?lang=en)
 
 ---
 
@@ -33,8 +33,15 @@ Zero build. A single HTML file plus ES Modules. Only two CDN dependencies: [`exi
 ## Run locally
 
 ```bash
-git clone https://github.com/863401402/image-provenance
+git clone https://github.com/luojiyin1987/image-provenance
 cd image-provenance
+npm install
+npm run dev   # wrangler pages dev, open http://localhost:8788
+```
+
+Or with Python:
+
+```bash
 python3 -m http.server 8000   # open http://localhost:8000
 ```
 
@@ -48,7 +55,7 @@ ES Modules + Web Workers require HTTP — `file://` will not load.
 
 ## Community
 
-Open a [GitHub Issue](https://github.com/863401402/image-provenance/issues) for bug reports / feature requests, or start a [Discussion](https://github.com/863401402/image-provenance/discussions) for broader questions.
+Open a [GitHub Issue](https://github.com/luojiyin1987/image-provenance/issues) for bug reports / feature requests, or start a [Discussion](https://github.com/luojiyin1987/image-provenance/discussions) for broader questions.
 
 ## License
 

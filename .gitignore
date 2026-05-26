@@ -7,9 +7,16 @@ Thumbs.db
 .idea/
 *.swp
 
-# Node (未来可能引入的构建工具)
+# Node
 node_modules/
+package-lock.json
 .cache/
+
+# Wrangler / Cloudflare
+.wrangler/
+
+# CodeGraph
+.codegraph/
 
 # 临时/备份
 *.tmp

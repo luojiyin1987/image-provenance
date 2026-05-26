@@ -1,6 +1,6 @@
 # Image Provenance
 
-[![Pages](https://img.shields.io/badge/demo-online-2ea44f)](https://863401402.github.io/image-provenance/)
+[![Pages](https://img.shields.io/badge/demo-online-2ea44f)](https://image-provenance.itea.fit/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Client-side](https://img.shields.io/badge/100%25-client--side-0071e3)](#)
 
@@ -8,7 +8,7 @@
 
 > AI 图片溯源分析工具。**100% 在浏览器里跑,图片从不离开你的设备。**
 
-👉 [**打开在线演示**](https://863401402.github.io/image-provenance/)
+👉 [**打开在线演示**](https://image-provenance.itea.fit/)
 
 ---
 
@@ -33,8 +33,15 @@
 ## 本地运行
 
 ```bash
-git clone https://github.com/863401402/image-provenance
+git clone https://github.com/luojiyin1987/image-provenance
 cd image-provenance
+npm install
+npm run dev   # wrangler pages dev, 打开 http://localhost:8788
+```
+
+或直接用 Python:
+
+```bash
 python3 -m http.server 8000   # 打开 http://localhost:8000
 ```
 
@@ -48,7 +55,7 @@ ES Modules + Web Worker 需要 HTTP 协议,`file://` 打不开。
 
 ## 交流
 
-**📱 微信交流群**(二维码过期请开 [Issue](https://github.com/863401402/image-provenance/issues))
+**📱 微信交流群**(二维码过期请开 [Issue](https://github.com/luojiyin1987/image-provenance/issues))
 
 <img src="docs/screenshots/wechat-qr.jpg" alt="微信交流群二维码" width="240">
 

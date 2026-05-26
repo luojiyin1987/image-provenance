@@ -4,6 +4,13 @@
   "description": "Client-side AI image provenance detector and watermark tooling",
   "type": "module",
   "private": true,
-  "repository": "https://github.com/863401402/image-provenance",
-  "license": "MIT"
+  "repository": "https://github.com/luojiyin1987/image-provenance",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
 }

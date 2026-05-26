@@ -210,10 +210,10 @@ const STRINGS = {
     'comm.eyebrow':         { zh: '社群',                                                               en: 'Community' },
     'comm.title':           { zh: 'AI 电商微信交流群',                                                  en: 'AI E-commerce WeChat Group' },
     'comm.sub':             { zh: '扫码加入讨论 · AI 图片工具 / 电商素材 / 自动化 / 工具链分享',         en: 'Scan to join · AI image tools / e-commerce assets / automation / toolchain sharing' },
-    'comm.hint.html':       { zh: '点二维码查看原图,或在 <a href="https://github.com/863401402/image-provenance/issues" target="_blank" rel="noopener">GitHub Issues</a> 提醒更新', en: 'Tap the QR to open the full image, or ping on <a href="https://github.com/863401402/image-provenance/issues" target="_blank" rel="noopener">GitHub Issues</a> if it expired' },
+    'comm.hint.html':       { zh: '点二维码查看原图,或在 <a href="https://github.com/luojiyin1987/image-provenance/issues" target="_blank" rel="noopener">GitHub Issues</a> 提醒更新', en: 'Tap the QR to open the full image, or ping on <a href="https://github.com/luojiyin1987/image-provenance/issues" target="_blank" rel="noopener">GitHub Issues</a> if it expired' },
 
     // Footer
-    'foot.mit':             { zh: 'MIT · 开源于 <a href="https://github.com/863401402/image-provenance" target="_blank" rel="noopener">GitHub</a>', en: 'MIT · Open source on <a href="https://github.com/863401402/image-provenance" target="_blank" rel="noopener">GitHub</a>' },
+    'foot.mit':             { zh: 'MIT · 开源于 <a href="https://github.com/luojiyin1987/image-provenance" target="_blank" rel="noopener">GitHub</a>', en: 'MIT · Open source on <a href="https://github.com/luojiyin1987/image-provenance" target="_blank" rel="noopener">GitHub</a>' },
     'foot.pitch':           { zh: '零构建 · 零后端 · 零上传',                                           en: 'Zero build · Zero backend · Zero upload' },
 
     // SEO meta (rendered into document.title / meta[name=description]... on language change)
