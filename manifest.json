@@ -1,0 +1,17 @@
+{
+  "name": "Image Provenance",
+  "short_name": "ImageProvenance",
+  "description": "免费 AI 图片检测工具。识别 C2PA、SynthID、DALL·E、Sora、Midjourney、Stable Diffusion 等 AI 生成签名。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/docs/screenshots/main-light.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}
