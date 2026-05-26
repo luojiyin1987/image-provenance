@@ -1,0 +1,11 @@
+# Cloudflare Pages _redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# 统一尾部斜杠：带斜杠的请求重定向到不带斜杠
+# （Cloudflare Pages 默认对目录添加斜杠，这里保持简洁）
+
+# 旧 GitHub Pages 链接 301 到新域名
+https://863401402.github.io/image-provenance/* https://image-provenance.itea.fit/:splat 301
+
+# 旧 .pages.dev 子域名 301 到自定义域名（部署后取消注释）
+# https://image-provenance.pages.dev/* https://image-provenance.itea.fit/:splat 301
