@@ -17,7 +17,7 @@ const STRINGS = {
     'topbar.lang':          { zh: '切换语言',                                                          en: 'Switch language' },
 
     // Upload
-    'upload.text.html':     { zh: '拖拽图片到此处<br>或 <strong>点击选择</strong>',                    en: 'Drag an image here<br>or <strong>click to select</strong>' },
+    'upload.text.html':     { zh: '拖拽图片到此处<br>或 <strong>点击选择</strong> / Ctrl+V 粘贴', en: 'Drag an image here<br>or <strong>click to select</strong> / Ctrl+V' },
     'upload.hint':          { zh: 'PNG · JPEG · WebP',                                                en: 'PNG · JPEG · WebP' },
     'upload.changeFile':    { zh: '换一张',                                                            en: 'Change' },
 

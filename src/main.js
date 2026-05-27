@@ -123,6 +123,20 @@ uploadArea.addEventListener('drop', e => {
     if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
 });
 fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+document.addEventListener('paste', (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+        if (item.type.startsWith('image/')) {
+            e.preventDefault();
+            const blob = item.getAsFile();
+            const ext = item.type === 'image/png' ? '.png' : item.type === 'image/jpeg' ? '.jpg' : item.type === 'image/webp' ? '.webp' : '.img';
+            const file = new File([blob], `clipboard${ext}`, { type: item.type });
+            handleFile(file);
+            return;
+        }
+    }
+});
 
 document.getElementById('btnChangeFile')?.addEventListener('click', (e) => {
     e.stopPropagation();
